@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dino Game</title>
+    <link rel="stylesheet" href="./style.css"/>
+    <style> 
+        *{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.game{
+  position: relative;
+  top: 30vh;
+  
+  transform: translate(0, -50%);
+  width: 100vw;
+  height: 30vh;
+  border: 1px solid black;
+  overflow: hidden;
+}
+
+.dino, .cactus{
+  position: absolute;
+  bottom: -17px;
+  width: 80px;
+  height: 85px;
+  background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5anYdGRuZhcB_GtWfpn_1MktgQg63kWQekA&usqp=CAU);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.jump{
+  animation: jump 0.5s linear;
+}
+
+.cactus{
+  right: 0;
+  background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwCnU1KBuDHe5RC-RqdMWnaQtwDVQ6ay1hWw&usqp=CAU);
+  animation: move 1.7s linear infinite;
+}
+
+.score{
+  position: absolute;
+  top: 10vh;
+  left: 10px;
+}
+
+h1{
+  display: inline;
+}
+
+P{
+  position: absolute;
+  font-weight: bold;
+  top: 50vh;
+  left: 33vw;
+  text-align: center;
+}
+
+
+@keyframes move{
+  0%{
+    right: -70px;
+  }
+  100%{
+    right: 100vw;
+  }
+}
+
+@keyframes jump{
+  0%{
+    bottom: 0px;
+  }
+  30%{
+    bottom: 90px;
+  }
+  50%{
+    bottom: 120px;
+  }
+  /*70%{
+    bottom: 90px;
+  }*/
+  100%{
+    bottom: -17px;
+  }
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="game">
+      <div class="dino" ></div>
+      <div class="cactus"></div>
+    </div>
+      <p>Touch To Jump</p>
+      <h1 class="score">SCORE: 0
+      </h1>
+  
+
+
+  <script>
+      const dino = document.querySelector(".dino")
+const cactus = document.querySelector(".cactus")
+const h1 = document.querySelector(".score")
+let score = 0
+function jump(){
+  if(dino.classList != "jump"){
+    dino.classList.add("jump");
+    setTimeout(()=>{
+        dino.classList.remove("jump");
+      }, 500)
+    h1.innerHTML = `SCORE: ${++score}`
+  }
+}
+
+let isAlive = ()=>{
+  let dinoBottom = parseInt(window.getComputedStyle(dino).getPropertyValue("bottom"))
+  let cactusRight = parseInt(window.getComputedStyle(cactus).getPropertyValue("right"))
+  if(dinoBottom<=20 && cactusRight>=210 && cactusRight<=280){
+    alert("Game Over")
+    score = 0
+    h1.innerHTML = "SCORE: 0"
+  }
+}
+
+setInterval(isAlive, 10)
+
+document.addEventListener("click", jump)
+  </script>
+</body>
+
+</html>

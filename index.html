@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weather app</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" "integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN crossorigin="anonymous">
+    
+    <style type="text/css" media="all">
+      *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.background{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -10;
+    background-color: black;
+    opacity: 1;
+}
+
+.circle{
+    width: 20vw;
+    height: 20vw;
+    bottom: 90vh;
+    right: 90vw;
+    border-radius: 50%;
+    background-color: red;
+}
+
+.circle1{
+    position: fixed;
+    top: 80vh;
+    right: 0vw;
+    width: 40vw;
+    height: 40vw;
+    border-radius: 50%;
+    background-color: red;
+}
+
+.app{
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(25px);
+}
+
+.forecast{
+    position: relative;
+    background-color: rgba(199, 199, 199, 0.1);
+    backdrop-filter: blur(25px);
+    opacity: 1;
+    width: 100%;
+    height: 190%;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    transform: translate(0, -5.5rem);
+    transition: 500ms ease-in-out;
+
+}
+
+.forecast.active{
+    transform: translate(0, -90vh);
+}
+
+.slider{
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 40px;
+    height: 10px;
+    cursor: pointer;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #3333ff;
+    opacity: 1;
+    backdrop-filter: none;
+    transform: translate(-50%, 0);
+}
+
+header{
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+}
+
+button{
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background-color: inherit;
+}
+
+.logo{
+    font-size: 1.5rem;
+    color: yellow;
+}
+
+.search{
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    color: hsl(240, 100%, 60%);
+}
+
+.location, .city-name{
+    display: flex;
+    justify-content: space-around;
+    margin: 5px 50%;
+    color: hsl(240, 100%, 60%);
+}
+
+.city-name{ 
+    color: white;
+    font-family: sans-serif;
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+header .sec{
+    display: flex;
+    justify-content: space-around;
+}
+
+.app .main .content{
+    position: absolute;
+    top: 60%;
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.wrapper{
+    padding-right: 20px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    /* padding: 2%; */
+}
+
+.temperature{
+    margin-left: 5%;
+    font-size: 3.5rem;
+    color: white;
+}
+
+.condition{
+    
+    color: white;
+    font-size: 1.25rem;
+}
+
+.img{
+    width: 20vh;
+    height: 20vh;
+}
+
+
+.search-module{
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(25px);
+    transform: scale(0);
+    transition: 200ms ease-in-out;
+}
+
+.search-module.active{
+    transform: scale(1);
+    transition: 200ms ease-in-out;
+}
+
+.search-module input{
+    transition: 200ms ease-in-out;
+    width: 60%;
+    height: 2.3rem;
+    color: rgb(233, 231, 231);
+    font-weight: bold;
+    font-family: sans-serif;
+    background-color: inherit;
+    border: none;
+    outline: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: 2px solid hsl(240, 69%, 42%);
+}
+
+.error.active::before{
+    content: 'No Match Found';
+    position: fixed;
+    top: 40vh;
+    left: 53vw;
+    /* transform: translate(-50%, 0); */
+    color: rgb(255, 38, 38);
+    opacity: 0;
+    animation: move 2s 1;
+}
+
+@keyframes move{
+    0%{
+        opacity: 0;
+        font-size: .5px;
+    }
+    30%, 50%{
+        opacity: 1;
+        font-size: 6.7vw;
+    }
+    100%{
+        opacity: 0;
+        font-size: .5px;
+        transform: translatex(-50vh);
+    }
+}
+
+.heading{
+    position: absolute;
+    top: 40px;
+    left: 10px;
+    padding: 7px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: #2c7aee80;
+    backdrop-filter: blur(25px);
+    color: white;
+    font-size: 1.25rem;
+    font-family: serif;
+    opacity: 1;
+}
+
+.day-forecast, .hour-forecast{
+    position: absolute;
+    top: 80px;
+    background-color: rgba(119, 119, 119, 0);
+    color: white;
+    backdrop-filter: blur(2px);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    overflow: visible;
+    border: none;
+}
+
+.day-forecast{
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    justify-content: space-around;
+}
+
+span{ padding: 3.5vh; }
+
+.hour-forecast{
+    top: 150px;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(25px);
+}
+
+th, td{
+    padding: 10px 2vh;
+    border-top: none;
+}
+
+table, tr, th, td{
+    border: 1px solid #3333ff;
+    border-collapse: collapse;
+}
+    </style>
+</head>
+<body>
+    <section class="app">
+        <div class="background">
+            <div class="circle"></div>
+            <div class="circle1"></div>
+        </div>
+        <div class="main">
+            <header>
+                <div class="sec">
+                    <button class="logo">
+                        <i class="fa fa-sun-o" aria-hidden="true"></i>
+                    </button>
+                    <h1 class="title">Weather app</h1>
+                </div>
+                <button class="search">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="location">
+                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                <p class="city-name">Search City</p>
+            </p>
+            <div class="content">
+                <div class="temperature">&deg;C</div>
+                <div class="wrapper">
+                    <div class="condition">condition</div>
+                    <!-- <img class="logo" alt="logo"> -->
+                </div>
+            </div>
+        </div>
+        <div class="forecast">
+            <button class="slider"></button>
+            <div class="info">
+                <h1 class="heading">Today Forecast</h1>
+                <div class="day-forecast">
+                    <span class="max-temp"></span>
+                    <span class="min-temp"></span>
+                    <span class="text"></span>
+                    <img class="icon"></span>
+                </div>
+                <table class="hour-forecast">
+                    <!-- <tr>
+                        <th>Time</th>
+                        <th>Temp</th>
+                        <th>Icon</th>
+                        <th>condition</th>
+                    </tr> -->
+                </table>
+            </div>
+        </div>
+
+    <div class="search-module">
+        <input input-city type="text" placeholder="       search city" value="">
+        <button id="search" class="search" type="submit">
+            <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <div class="error"></div>
+    
+
+    <script>
+      const app = document.querySelector('.app')
+const searchButton = document.querySelector('.search')
+const searchModule = document.querySelector('.search-module')
+const inputValue = document.querySelector('[input-city]')
+const searchCity = document.querySelector('#search')
+const slider = document.querySelector('.slider')
+const sliderActive = document.querySelector('.slider.active')
+const forecast = document.querySelector('.forecast')
+const temperature = document.querySelector('.temperature')
+const cityName = document.querySelector('.city-name')
+const wrapper = document.querySelector('.wrapper')
+const condition = document.querySelector('.condition')
+const error = document.querySelector('.error')
+const maxTemp = document.querySelector('.max-temp')
+const minTemp = document.querySelector('.min-temp')
+const text = document.querySelector('.text')
+const icon = document.querySelector('.icon')
+const table = document.querySelector('.hour-forecast')
+const key = '84695518c95b4ccb8a732922211002'
+// const img = document.querySelector('.img')
+// let city = 'tenali'
+
+// sunlogo =' //cdn.weatherapi.com/weather/64x64/day/113.png'
+// moonlogo = "//cdn.weatherapi.com/weather/64x64/night/116.png"
+
+window.addEventListener('load', byCoords())
+
+searchButton.addEventListener('click', ()=>{
+    searchModule.classList.add('active')
+})
+searchCity.addEventListener('click', ()=>{
+    let city = inputValue.value
+    searchModule.classList.remove('active')
+    byName(city);
+})
+slider.addEventListener('click', ()=>{
+    if(forecast.classList.value == 'forecast active'){
+        forecast.classList.remove('active')
+        app.style.overflow = 'hidden';
+    }
+    // position: fixed
+    else{
+        forecast.classList.add('active')
+        app.style.overflow = 'scroll';
+    }
+})
+
+function byCoords(){
+    let lat, long, api1, api2
+    // const proxy = 'https://cors-anywhere.herokuapp.com/'
+    // let api = `http://api.weatherstack.com/current?access_key=${key}&query=${lat},${long}`
+    // const key = '80e9d5701efe84fffed651c3e5773ba4'
+    // const key = '84695518c95b4ccb8a732922211002'
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(position=>{
+            lat = position.coords.latitude
+            long = position.coords.longitude
+            console.log(lat, long)
+            api1 = `http://api.weatherapi.com/v1/current.json?key=${key}&q=${lat},${long}`
+            api2 = `http://api.weatherapi.com/v1/forecast.json?key=${key}&q=${lat},${long}`
+            fetchApi(api1)
+            setForecast(api2)
+        })
+    }
+}
+
+function byName(name){
+    let api1 = `http://api.weatherapi.com/v1/current.json?key=${key}&q=${name}`
+    let api2 = `http://api.weatherapi.com/v1/forecast.json?key=${key}&q=${name}`
+    fetchApi(api1) 
+    setForecast(api2)
+}
+
+function fetchApi(api){
+    fetch(api)
+    .then(response=>response.json())
+    .then(data=>{
+        if(data.error){
+            if(error.classList.value == 'error active'){
+                error.classList.remove('active')
+            }else{
+                error.classList.add('active')
+            }
+        }
+        else{ 
+            // console.log(data)
+            if(document.querySelector('.img') != null) document.querySelector('.img').remove()
+            temperature.innerHTML = data.current.temp_c+'&deg;c'
+            cityName.innerHTML = data.location.name
+            condition.innerHTML = data.current.condition.text
+            let img = document.createElement('img')
+            img.src = data.current.condition.icon
+            img.className = 'img'
+            wrapper.appendChild(img)
+            
+            // logo.setAttribute('src', data.current.condition.icon)
+            return false
+        }
+    })
+}
+
+function setForecast(api){
+    fetch(api)
+    .then(response=>response.json())
+    .then(data=>{
+        console.log(data)
+        let castObject = data.forecast.forecastday[0].day
+        maxTemp.innerHTML = 'max: '+castObject.maxtemp_c +'&deg;'
+        minTemp.innerHTML = 'min: '+castObject.mintemp_c+'&deg;'
+        text.innerHTML = castObject.condition.text
+        icon.src = castObject.condition.icon    
+        
+        table.querySelectorAll('tr').forEach(tr=>{
+            tr.remove()
+        })
+        let tr = document.createElement('tr'),
+            time = document.createElement('th'),
+            temp = document.createElement('th'),
+            condition = document.createElement('th'),
+            icon1 = document.createElement('th')
+        time.innerHTML = 'Time'
+        temp.innerHTML = 'Temp'
+        icon1.innerHTML = 'Icon'
+        condition.innerHTML = 'Condition'
+        tr.appendChild(time)
+        tr.appendChild(temp)
+        tr.appendChild(condition)
+        tr.appendChild(icon1)
+        table.appendChild(tr)
+        
+        let object = data.forecast.forecastday[0].hour
+        for(let i=0; i<24; i+=1){
+            let tr = document.createElement('tr')
+            let time = document.createElement('td'),
+            temp = document.createElement('td'),
+            condition = document.createElement('td'),
+            icon = document.createElement('td'),
+            img = document.createElement('img')
+            img.src = object[i].condition.icon
+            time.innerHTML = object[i].time
+            temp.innerHTML = object[i].temp_c
+            condition.innerHTML = object[i].condition.text
+            icon.appendChild(img) 
+            tr.appendChild(time)
+            tr.appendChild(temp)
+            tr.appendChild(condition)
+            tr.appendChild(icon)
+            table.appendChild(tr)
+        }
+    })
+}
+    </script>
+</body>
+</html>
